@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Page - Boekhousvergelijker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1100; /* keep header above hero illustration */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #2563eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #333;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, #eef3f9 0%, #e6f0fb 100%);
+            /* increase vertical padding to create more space around the hero */
+            padding: 60px 0 40px 0;
+            margin-bottom: 24px; /* reduced gap below hero */
+            overflow: hidden; /* hide small overflow while keeping visual edge */
+            /* leave extra right padding so text never collides with the absolute illustration */
+            padding-right: 300px;
+            /* make hero tall enough but not excessive so illustration visually fills it */
+            min-height: 420px;
+            display: block;
+        }
+
+        /* center the hero text; the illustration will be absolutely positioned to the right */
+        .hero-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding-left: 20px;
+        }
+
+        .hero-text h1 {
+            /* slightly larger, but constrained width so it wraps into multiple lines */
+            font-size: 56px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.02;
+            max-width: 620px; /* force wrapping into ~3 lines on wide screens */
+            word-break: break-word;
+        }
+
+        .hero-text p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero-image {
+            position: absolute;
+            /* push slightly beyond the viewport so the curved right part shows */
+            right: -40px;
+            /* make the illustration fill the hero vertically */
+            top: 0;
+            bottom: 0;
+            height: 100%;
+            width: auto;
+            max-width: none;
+            border-radius: 12px;
+            overflow: hidden;
+            display: block;
+            z-index: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1280px) {
+            .hero-image { right: -24px; height:100%; }
+            .hero { padding-right: 220px; min-height: 380px; }
+            .hero-text h1 { max-width: 560px; font-size:52px; }
+        }
+
+        @media (max-width: 900px) {
+            .hero-image { right: -12px; height:100%; }
+            .hero { padding-right: 160px; min-height: 340px; }
+            .hero-text h1 { max-width: 460px; font-size:44px; }
+        }
+
+        @media (max-width: 700px) {
+            /* stack the image below the hero content on small screens */
+            .hero-image {
+                position: static;
+                width: 100%;
+                height: auto;
+                transform: none;
+                margin-top: 18px;
+                max-height: none;
+                border-radius: 8px;
+            }
+            .hero {
+                padding-right: 20px;
+                min-height: auto;
+            }
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            .hero-text h1 { max-width: 100%; font-size:32px; line-height:1.1; }
+        }
+
+        .hero-image img{width:100%;height:100%;object-fit:cover;display:block}
+
+        /* responsive adjustments */
+        @media (max-width:1280px){
+            .hero-image{width:560px}
+        }
+        @media (max-width:900px){
+            .hero-image{position:static;transform:none;width:100%;height:220px;margin-top:22px}
+            .hero-content{padding-left:0}
+        }
+
+        /* Articles Section */
+        .articles-section {
+            padding: 40px 0; /* reduced top padding so it sits closer to hero */
+        }
+
+        .article-item {
+            /* soft light-blue card background */
+            background-color: #eaf5ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 24px;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .article-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-item.featured {
+            /* Removed the blue outline; use a subtle shadow to indicate featured state */
+            box-shadow: 0 6px 18px rgba(59,130,246,0.08);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 160px;
+            background-color: transparent; /* remove visible grey */
+            border-radius: 8px;
+            overflow: hidden;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .article-image img {
+            display:block;
+            width:100%;
+            height:100%;
+            object-fit:cover; /* ensure image fills the whole area */
+            border-radius:8px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .article-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Trending Section */
+        .trending-section {
+            background-color: #f3f4f6;
+            /* larger spacing around trending to separate sections */
+            padding: 48px 0 64px 0;
+            margin: 0 0 24px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .title-underline {
+            width: 60px;
+            height: 4px;
+            background-color: #3b82f6;
+            margin: 0 auto 40px;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .trending-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .trending-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .trending-card-image {
+            width: 100%;
+            height: 200px;
+            background-color: #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .trending-card-content {
+            padding: 25px;
+        }
+
+        .trending-card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .trending-card-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .trending-card .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            /* increased top padding to create a clearer section gap */
+            padding: 48px 0 80px 0;
+            background-color: white;
+        }
+
+        .cta-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .cta-text h2 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .cta-text p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .cta-image {
+            width: 100%;
+            height: 280px;
+            background-color: #d1d5db;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #1e40af 0%, #0d9488 100%);
+            color: white;
+            padding: 80px 0 40px; /* increase footer top/bottom spacing */
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            width: 28px;
+            height: 28px;
+            background-color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e40af;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 32px;
+            }
+
+            .article-item {
+                grid-template-columns: 1fr;
+            }
+
+            .article-image {
+                height: 200px;
+            }
+
+            .cta-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-text h2 {
+                font-size: 28px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .trending-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero-text h1 {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .article-title {
+                font-size: 18px;
+            }
+
+            .cta-text h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* In-page detail overlay */
+        .detail-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:9999;padding:20px}
+        .detail-overlay.active{display:flex}
+        .detail-panel{background:#fff;border-radius:12px;max-width:1100px;width:100%;max-height:90vh;overflow:auto;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative}
+        .detail-close{position:absolute;right:16px;top:16px;background:#fff;border:1px solid #e6eef5;padding:6px 10px;border-radius:8px;cursor:pointer}
+        .detail-panel img{width:100%;height:320px;object-fit:cover;border-radius:8px}
+        .detail-content h2{margin-top:0}
+        @media (max-width:900px){.detail-panel{grid-template-columns:1fr}.detail-panel img{height:220px}}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">B</div>
+                    <span>boekhousvergelijker</span>
+                </div>
+                <nav>
+                    <a href="#home">Home</a>
+                    <a href="#compare">To Compare</a>
+                    <a href="#blogs">Blogs</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                <button class="btn btn-primary">Contact Us</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Blogs & Articles</h1>
+                    <p>There are many variations of passages of Lorem ipsum available, but the majority have suffered alteration in some form.</p>
+                </div>
+                <div class="hero-image">
+                    <img src="Blog 1.png" alt="Hero illustration" style="max-width:86%; max-height:86%; object-fit:contain; border-radius:10px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section class="articles-section">
+        <div class="container">
+            <!-- Article 1 -->
+            <div class="article-item">
+                <div class="article-image"><img src="Rectangle 176.png" alt="Article image 1" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
+                <div>
+                    <div class="article-meta">
+                        <span> 13:05</span>
+                        <span>28 Oct 2025</span>
+                    </div>
+                    <h3 class="article-title">There are many variations of passages of Lorem ipsum available</h3>
+                    <p class="article-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors. Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Read More</button>
+                </div>
+            </div>
+
+            <!-- Article 2 -->
+            <div class="article-item">
+                <div class="article-image"><img src="Rectangle 189.png" alt="Article image 2" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
+                <div>
+                    <div class="article-meta">
+                        <span> 13:05</span>
+                        <span>28 Oct 2025</span>
+                    </div>
+                    <h3 class="article-title">There are many variations of passages of Lorem ipsum available</h3>
+                    <p class="article-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors. Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Read More</button>
+                </div>
+            </div>
+
+            <!-- Article 3 - Featured -->
+            <div class="article-item featured">
+                <div class="article-image"><img src="Rectangle 191.png" alt="Article image 3" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
+                <div>
+                    <div class="article-meta">
+                        <span> 13:05</span>
+                        <span>28 Oct 2025</span>
+                    </div>
+                    <h3 class="article-title">There are many variations of passages of Lorem ipsum available</h3>
+                    <p class="article-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors. Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Read More</button>
+                </div>
+            </div>
+
+            <!-- Article 4 -->
+            <div class="article-item">
+                <div class="article-image"><img src="Rectangle 193.png" alt="Article image 4" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
+                <div>
+                    <div class="article-meta">
+                        <span> 13:05</span>
+                        <span>28 Oct 2025</span>
+                    </div>
+                    <h3 class="article-title">There are many variations of passages of Lorem ipsum available</h3>
+                    <p class="article-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors. Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Read More</button>
+                </div>
+            </div>
+
+            <!-- Article 5 -->
+            <div class="article-item">
+                <div class="article-image"><img src="Rectangle 195.png" alt="Article image 5" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
+                <div>
+                    <div class="article-meta">
+                        <span> 13:05</span>
+                        <span>28 Oct 2025</span>
+                    </div>
+                    <h3 class="article-title">There are many variations of passages of Lorem ipsum available</h3>
+                    <p class="article-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors. Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Read More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Section -->
+    <section class="trending-section">
+        <div class="container">
+            <h2 class="section-title">Top Trending Blogs</h2>
+            <div class="title-underline"></div>
+
+            <div class="trending-grid">
+                <!-- Trending Card 1 -->
+                <div class="trending-card">
+                    <div class="trending-card-image"><img src="Rectangle 131.png" alt="Trending 1" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+                    <div class="trending-card-content">
+                        <h3 class="trending-card-title">There are many variations of passages of Lorem ipsum available</h3>
+                        <p class="trending-card-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                        <button class="btn btn-primary">Read More</button>
+                    </div>
+                </div>
+
+                <!-- Trending Card 2 -->
+                <div class="trending-card">
+                    <div class="trending-card-image"><img src="Rectangle 133.png" alt="Trending 2" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+                    <div class="trending-card-content">
+                        <h3 class="trending-card-title">There are many variations of passages of Lorem ipsum available</h3>
+                        <p class="trending-card-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                        <button class="btn btn-primary">Read More</button>
+                    </div>
+                </div>
+
+                <!-- Trending Card 3 -->
+                <div class="trending-card">
+                    <div class="trending-card-image"><img src="Rectangle 135.png" alt="Trending 3" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+                    <div class="trending-card-content">
+                        <h3 class="trending-card-title">There are many variations of passages of Lorem ipsum available</h3>
+                        <p class="trending-card-description">Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                        <button class="btn btn-primary">Read More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <div class="cta-text">
+                    <h2>Compare the Top Accounting Software & Pick the Right One</h2>
+                    <p>Manual financial reporting methods—often relying on Excel sheets and paper-based systems—are not only time-consuming but also prone to errors.</p>
+                    <button class="btn btn-primary">Compare Now</button>
+                </div>
+                <div class="cta-image"><img src="Website_Prototype.png" alt="Prototype illustration" style="width:100%;height:100%;object-fit:contain;border-radius:8px;display:block"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- In-page Blog Detail Overlay -->
+    <div class="detail-overlay" id="detailOverlay" aria-hidden="true">
+        <div class="detail-panel" role="dialog" aria-modal="true">
+            <button class="detail-close" id="detailClose">Close ✕</button>
+            <div class="detail-media"><img id="detailImg" src="" alt="Detail image"></div>
+            <div class="detail-content">
+                <div class="meta-row" id="detailMeta"></div>
+                <h2 id="detailTitle"></h2>
+                <div id="detailBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#comparison">Comparison Overview Page</a></li>
+                        <li><a href="#software">Software Page</a></li>
+                        <li><a href="#blog">Blog Page</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#contact">Contact Page</a></li>
+                        <li><a href="#software">Software Page</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Policy</h4>
+                    <ul>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#facebook">f</a>
+                        <a href="#linkedin">in</a>
+                        <a href="#twitter">tw</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">B</div>
+                    <span>boekhousvergelijker</span>
+                </div>
+                <p>Some Like to use website on offline sites</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Open article detail in overlay by extracting DOM content
+        (function(){
+            const overlay = document.getElementById('detailOverlay');
+            const closeBtn = document.getElementById('detailClose');
+            const detailImg = document.getElementById('detailImg');
+            const detailTitle = document.getElementById('detailTitle');
+            const detailMeta = document.getElementById('detailMeta');
+            const detailBody = document.getElementById('detailBody');
+
+            function openDetailFromArticle(article){
+                const imgEl = article.querySelector('.article-image img');
+                const titleEl = article.querySelector('.article-title');
+                const metaEl = article.querySelector('.article-meta');
+                const bodyEl = article.querySelector('.article-description');
+
+                detailImg.src = imgEl ? imgEl.src : '';
+                detailImg.alt = titleEl ? titleEl.innerText : 'Article image';
+                detailTitle.textContent = titleEl ? titleEl.innerText : '';
+                detailMeta.innerHTML = metaEl ? metaEl.innerHTML : '';
+                // For demo we copy the excerpt; you can replace with full content
+                detailBody.innerHTML = bodyEl ? ('<p>'+ bodyEl.innerText + '</p>') : '<p>No content</p>';
+
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden','false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeOverlay(){
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden','true');
+                document.body.style.overflow = '';
+            }
+
+            // Attach click handlers to Read More buttons inside article items
+            document.querySelectorAll('.article-item .btn-primary').forEach(btn=>{
+                btn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const article = btn.closest('.article-item');
+                    if(article) openDetailFromArticle(article);
+                });
+            });
+
+            closeBtn.addEventListener('click', closeOverlay);
+            overlay.addEventListener('click', function(e){
+                if(e.target === overlay) closeOverlay();
+            });
+        })();
+    </script>
+</body>
+</html>
